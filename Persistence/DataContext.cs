@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 using Domain;
+using System.Threading.Tasks;
 
 namespace Persistence
 {
@@ -10,7 +11,7 @@ namespace Persistence
             public DataContext(DbContextOptions options) :base(options) 
             {  }
             public DbSet<Value> Values { get; set; }
-
+             public DbSet<Activity> Activities { get; set; }
               protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Value>()
@@ -19,6 +20,11 @@ namespace Persistence
                     new Value {Id = 2, Name = "Value 102"},
                     new Value {Id = 3, Name = "Value 103"}
                 );
+        }
+
+        public Task FindAsync(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
