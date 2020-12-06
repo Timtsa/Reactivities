@@ -1,19 +1,19 @@
-import React, { SyntheticEvent } from 'react'
+import { observer } from 'mobx-react-lite'
+import React, { useContext } from 'react'
 import { Button, Item, Label, Segment } from 'semantic-ui-react'
-import { IActivity } from '../../../app/models/activity'
-interface IProps {
-    activities: IActivity[]
-    selectActivity: (id: string) => void;
-    deleteActivity: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
-    submitting: boolean;
-    target: string;
-}
-export const ActivityList: React.FC<IProps> = ({ activities, selectActivity,
-    deleteActivity, submitting, target }) => {
+import ActivityStore from '../../../app/stores/activityStore'
+
+const ActivityList: React.FC = () => {
+    const activityStore = useContext(ActivityStore);
+    const { activitiesByDate, selectActivity, deleteActivity, submitting, target } = activityStore;
+    console.log(activityStore.selectedActivity?.id.toString())
+    console.log(activityStore.selectActivity.toString())
+   
+
     return (
         <Segment clearing>
             <Item.Group divided>
-                {activities.map(activity => (
+                {activitiesByDate.map(activity => (
                     <Item key={activity.id}>
                         <Item.Content>
                             <Item.Header as='a'>{activity.title}</Item.Header>
@@ -24,7 +24,9 @@ export const ActivityList: React.FC<IProps> = ({ activities, selectActivity,
                             </Item.Description>
                             <Item.Extra>
                                 <Button onClick={() => selectActivity(activity.id)}
-                                    floated='right' content='View' color='blue'></Button>
+                                    floated='right' content='View' color='blue'>
+
+                                </Button>
 
                                 <Button loading={target === activity.id && submitting}
                                     name={activity.id}
@@ -34,11 +36,9 @@ export const ActivityList: React.FC<IProps> = ({ activities, selectActivity,
                             </Item.Extra>
                         </Item.Content>
                     </Item>
-
                 ))}
-
             </Item.Group>
         </Segment>
-
-    )
+    )   
 }
+export default observer(ActivityList);
