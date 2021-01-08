@@ -14,6 +14,8 @@ export const ActivityForm: React.FC<IProps> = ({ activity: initialFormState
      }) => {
     const activityStore = useContext(ActivityStore);
     const { createActivity,editActivity,submitting,cancelFormOpen } = activityStore;
+   
+    
     const InitializeForm = () => {
         if (initialFormState)
             return initialFormState;

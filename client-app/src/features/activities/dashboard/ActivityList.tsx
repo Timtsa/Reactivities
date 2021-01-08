@@ -6,9 +6,7 @@ import ActivityStore from '../../../app/stores/activityStore'
 const ActivityList: React.FC = () => {
     const activityStore = useContext(ActivityStore);
     const { activitiesByDate, selectActivity, deleteActivity, submitting, target } = activityStore;
-    console.log(activityStore.selectedActivity?.id.toString())
-    console.log(activityStore.selectActivity.toString())
-   
+  
 
     return (
         <Segment clearing>
