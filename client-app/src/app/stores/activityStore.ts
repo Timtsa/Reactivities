@@ -1,4 +1,4 @@
-import { makeObservable, observable, action, computed, configure, runInAction, makeAutoObservable } from "mobx";
+import { makeObservable, observable, action, computed, configure, runInAction } from "mobx";
 import { SyntheticEvent } from "react";
 import { createContext } from "react";
 import agent from "../api/agent";
@@ -11,7 +11,7 @@ class ActivityStore {
   activityRegistry = new Map();
   activities: IActivity[] = [];
   loadingInitial = false;
-  selectedActivity: IActivity | undefined;
+  selectedActivity: IActivity | null=null;
   editMode = false;
   submitting = false;
   target = '';
@@ -35,7 +35,10 @@ class ActivityStore {
       cancelSelectedActivity: action,
       cancelFormOpen: action,
       editActivity: action,
-      deleteActivity: action
+      deleteActivity: action,
+      loadActivity: action,
+      getActivite: action,
+      clearActivity:action
     })
   }
 
@@ -63,6 +66,35 @@ class ActivityStore {
     }
   };
 
+  loadActivity = async (id: string) => {
+    let activity = this.getActivite(id)
+    if (activity) {
+      this.selectedActivity = activity
+    }
+    else {
+      this.loadingInitial = true;
+      try {
+        activity = await agent.Activities.details(id);
+        runInAction(() => {
+          this.selectedActivity = activity;
+          this.loadingInitial = false;
+        })
+      } catch (error) {
+        runInAction(() => {
+          this.loadingInitial = false;
+        })
+        console.log(error);
+      }
+    }
+  };
+
+  clearActivity=()=>{
+    this.selectedActivity=null;     
+  }
+
+  getActivite = (id: string) => {
+    return this.activityRegistry.get(id);
+  }
 
   createActivity = async (activity: IActivity) => {
     this.submitting = true;
@@ -83,7 +115,7 @@ class ActivityStore {
 
   opencCreateForm = () => {
     this.editMode = true;
-    this.selectedActivity = undefined
+    this.selectedActivity = null
   }
   selectActivity = (id: string) => {
     this.selectedActivity = this.activityRegistry.get(id);
@@ -96,7 +128,7 @@ class ActivityStore {
   }
 
   cancelSelectedActivity = () => {
-    this.selectedActivity = undefined;
+    this.selectedActivity = null;
   }
 
   cancelFormOpen = () => {
